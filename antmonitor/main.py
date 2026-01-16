@@ -3,6 +3,8 @@
 import sys
 import logging
 import threading
+import platform
+from ctypes import c_void_p
 from PyQt6.QtWidgets import QApplication, QMainWindow, QLabel, QVBoxLayout, QWidget
 from PyQt6.QtCore import Qt, QThread, pyqtSignal, QTimer
 from PyQt6.QtGui import QFont, QKeySequence, QShortcut
@@ -224,6 +226,26 @@ class HeartRateMonitor(QMainWindow):
                 Qt.WindowType.Tool
             )
             self.setAttribute(Qt.WidgetAttribute.WA_TranslucentBackground)
+            self.setAttribute(Qt.WidgetAttribute.WA_ShowWithoutActivating)
+            
+            # Raise to top level
+            self.raise_()
+            
+            # Make window appear on all desktops/spaces (macOS)
+            if platform.system() == 'Darwin':
+                try:
+                    import objc
+                    from Cocoa import NSWindow, NSWindowCollectionBehaviorCanJoinAllSpaces, NSStatusWindowLevel
+                    
+                    ns_view = objc.objc_object(c_void_p=int(self.winId()))
+                    ns_window = ns_view.window()
+                    
+                    # Make window visible on all spaces
+                    ns_window.setCollectionBehavior_(NSWindowCollectionBehaviorCanJoinAllSpaces)
+                    # Use status window level (menu bar level) to stay above Mission Control
+                    ns_window.setLevel_(NSStatusWindowLevel)
+                except Exception as e:
+                    logger.warning(f"Could not set macOS window properties: {e}")
             
             # Style for overlay mode
             self.setStyleSheet("""
