@@ -1,0 +1,23 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "antmonitor"
+version = "1.0.0"
+description = "Desktop ANT+ Heart Rate Monitor with transparent overlay mode"
+readme = "README.md"
+requires-python = ">=3.9"
+authors = [
+    {name = "ANT Monitor"}
+]
+dependencies = [
+    "PyQt6>=6.6.0",
+    "openant>=1.2.0",
+]
+
+[project.scripts]
+antmonitor = "antmonitor.main:main"
+
+[project.gui-scripts]
+antmonitor-gui = "antmonitor.main:main"
