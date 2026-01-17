@@ -175,6 +175,7 @@ class HeartRateMonitor(QMainWindow):
         
         # Central widget
         central = QWidget()
+        central.setObjectName("centralWidget")
         self.setCentralWidget(central)
         layout = QVBoxLayout(central)
         
@@ -216,6 +217,10 @@ class HeartRateMonitor(QMainWindow):
     def toggle_overlay_mode(self):
         """Toggle transparent overlay mode"""
         self.overlay_mode = not self.overlay_mode
+
+        # On Windows, hiding before changing flags is necessary for transparency
+        if platform.system() == "Windows":
+            self.hide()
         
         if self.overlay_mode:
             # Enable overlay mode
@@ -250,7 +255,10 @@ class HeartRateMonitor(QMainWindow):
             # Style for overlay mode
             self.setStyleSheet("""
                 QMainWindow {
-                    background-color: rgba(0, 0, 0, 180);
+                    background: transparent;
+                }
+                #centralWidget {
+                    background-color: transparent;
                 }
                 QLabel {
                     color: rgba(255, 255, 255, 230);
